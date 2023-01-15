@@ -3,21 +3,15 @@ package br.com.attornatuschallenge.service;
 import static org.junit.Assert.assertThrows;
 
 import java.util.Arrays;
-import java.util.Date;
-import java.util.List;
-import java.util.Optional;
 
 import org.junit.jupiter.api.Test;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.extension.ExtendWith;
-import org.mockito.ArgumentMatchers;
 import org.mockito.BDDMockito;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.modelmapper.ModelMapper;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
+
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 
 import br.com.attornatuschallenge.entity.Address;
@@ -25,10 +19,6 @@ import br.com.attornatuschallenge.entity.Person;
 import br.com.attornatuschallenge.repository.AddressRepository;
 import br.com.attornatuschallenge.repository.PersonRepository;
 import br.com.attornatuschallenge.utils.PersonCreator;
-import br.com.attornatuschallenge.utils.Utils;
-import jakarta.persistence.EntityManager;
-import jakarta.persistence.PersistenceContext;
-import jakarta.transaction.Transactional;
 
 @ExtendWith(SpringExtension.class)
 public class AddressServiceTest {
