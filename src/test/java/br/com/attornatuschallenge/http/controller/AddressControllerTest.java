@@ -18,10 +18,14 @@ import com.fasterxml.jackson.databind.ObjectWriter;
 
 import static org.hamcrest.Matchers.*;
 
+import java.util.Arrays;
+import java.util.List;
+
 import br.com.attornatuschallenge.entity.Address;
 import br.com.attornatuschallenge.entity.Person;
 import br.com.attornatuschallenge.error.ResourceNotFoundException;
 import br.com.attornatuschallenge.service.AddressService;
+import br.com.attornatuschallenge.service.PersonService;
 import br.com.attornatuschallenge.utils.PersonCreator;
 
 @WebMvcTest(AddressController.class)
@@ -36,11 +40,13 @@ public class AddressControllerTest {
 
   ObjectWriter objectWriter = new ObjectMapper().writer().withDefaultPrettyPrinter();
 
+  PersonService personService;
+
   @Test
   @DisplayName("Create an address with success")
   public void testCreateAddressSuccessful() throws Exception {
     Person person = PersonCreator.createPerson("Luiz", "1998-05-01");
-    Address address = new Address("Rua das Laranjeiras", "12345-789", 1234, "Mangueira", person);
+    Address address = new Address("Rua das Laranjeiras", "12345-789", 1234, "Mangueira", false, person);
 
     String addressRequest = objectWriter.writeValueAsString(address);
 
@@ -62,26 +68,60 @@ public class AddressControllerTest {
   @DisplayName("It fails to create an address with non existing person")
   public void testCreateAddressFailure() throws Exception {
     Person person = PersonCreator.createPerson("Luiz", "1998-05-01");
-    Address address = new Address("Rua das Laranjeiras", "12345-789", 1234, "Mangueira", person);
+    Address address = new Address("Rua das Laranjeiras", "12345-789", 1234, "Mangueira", true, person);
 
     String addressRequest = objectWriter.writeValueAsString(address);
 
     BDDMockito.given(addressService.save(ArgumentMatchers.any(), ArgumentMatchers.any()))
-        .willThrow(new ResourceNotFoundException("Person not found."));
+        .willThrow(new ResourceNotFoundException("Person not found with id 1"));
 
     mvc.perform(
         MockMvcRequestBuilders.post("/api/address/1")
             .content(addressRequest)
             .contentType(MediaType.APPLICATION_JSON))
-        .andExpect(MockMvcResultMatchers.status().isNotFound());
+        .andExpect(MockMvcResultMatchers.status().isNotFound())
+        .andExpect(MockMvcResultMatchers.jsonPath("$.detail", is("Person not found with id 1")));
+  }
+
+  @Test
+  @DisplayName("Get all addresses with success")
+  public void testGetAddressesSuccessful() throws Exception {
+    Person person = PersonCreator.createPerson("Luiz", "1998-05-01");
+
+    List<Address> addresses = Arrays.asList(
+        new Address("Rua das Laranjeiras", "19875-789", 4567, "Mangueira", true, person),
+        new Address("Rua das Amoras", "12345-789", 1234, "Tapereba", false, person));
+
+    person.setAddresses(addresses);
+
+    BDDMockito.given(addressService.getAddresses(ArgumentMatchers.any())).willReturn(addresses);
+
+    mvc.perform(MockMvcRequestBuilders.get("/api/addresses/1"))
+        .andExpect(MockMvcResultMatchers.status().isOk())
+        .andExpect(MockMvcResultMatchers.jsonPath("$[0].publicSpace", is("Rua das Laranjeiras")))
+        .andExpect(MockMvcResultMatchers.jsonPath("$[1].zipCode", is("12345-789")))
+        .andExpect(MockMvcResultMatchers.jsonPath("$[0].number", is(4567)))
+        .andExpect(MockMvcResultMatchers.jsonPath("$[1].city", is("Tapereba")))
+        .andExpect(MockMvcResultMatchers.jsonPath("$[0].mainAddress", is(true)));
+  }
+
+  @Test
+  @DisplayName("It fails to get addresses with non existing person")
+  public void testGetAddressesFailure() throws Exception {
+    BDDMockito.given(addressService.getAddresses(1L))
+        .willThrow(new ResourceNotFoundException("Person not found with id 1"));
+
+    mvc.perform(
+        MockMvcRequestBuilders.get("/api/addresses/1"))
+        .andExpect(MockMvcResultMatchers.status().isNotFound())
+        .andExpect(MockMvcResultMatchers.jsonPath("$.detail", is("Person not found with id 1")));
   }
 
   @Test
   @DisplayName("Get a main address with success")
   public void testGetAddressSuccessful() throws Exception {
     Person person = PersonCreator.createPerson("Luiz", "1998-05-01");
-    Address address = new Address("Rua das Laranjeiras", "12345-789", 1234, "Mangueira", person);
-    address.setMainAddress(true);
+    Address address = new Address("Rua das Laranjeiras", "12345-789", 1234, "Mangueira", true, person);
 
     BDDMockito.given(addressService.getMainAddress(ArgumentMatchers.any())).willReturn(address);
 
@@ -98,10 +138,11 @@ public class AddressControllerTest {
   @DisplayName("It fails to get a main address with non existing person")
   public void testGetAddressFailure() throws Exception {
     BDDMockito.given(addressService.getMainAddress(ArgumentMatchers.any()))
-    .willThrow(new ResourceNotFoundException("Person not found."));
+        .willThrow(new ResourceNotFoundException("Person not found with id 1"));
 
-mvc.perform(
-    MockMvcRequestBuilders.get("/api/address/1"))
-    .andExpect(MockMvcResultMatchers.status().isNotFound());
+    mvc.perform(
+        MockMvcRequestBuilders.get("/api/address/1"))
+        .andExpect(MockMvcResultMatchers.status().isNotFound())
+        .andExpect(MockMvcResultMatchers.jsonPath("$.detail", is("Person not found with id 1")));
   }
 }

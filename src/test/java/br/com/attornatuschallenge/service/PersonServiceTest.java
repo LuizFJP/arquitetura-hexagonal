@@ -34,8 +34,8 @@ public class PersonServiceTest {
   public void testCreatePersonSuccessful() throws Exception {
     Person person = PersonCreator.createPerson("Luiz", "1998-05-01");
     List<Address> addresses = Arrays.asList(
-        new Address("Rua das Laranjeiras", "12345-789", 1234, "Mangueira", person),
-        new Address("Rua Cupuacu", "98765-432", 5678, "Avocada", person));
+        new Address("Rua das Laranjeiras", "12345-789", 1234, "Mangueira", false, person),
+        new Address("Rua Cupuacu", "98765-432", 5678, "Avocada", true, person));
     person = PersonCreator.createPersonWithAddresses(person, addresses);
 
     BDDMockito.given(personRepository.save(ArgumentMatchers.any())).willReturn(person);
@@ -52,8 +52,8 @@ public class PersonServiceTest {
   public void testGetPersonSucessful() throws Exception {
     Person person = PersonCreator.createPerson("Luiz", "1998-05-01");
     List<Address> addresses = Arrays.asList(
-        new Address("Rua das Laranjeiras", "12345-789", 1234, "Mangueira", person),
-        new Address("Rua Cupuacu", "98765-432", 5678, "Avocada", person));
+        new Address("Rua das Laranjeiras", "12345-789", 1234, "Mangueira", true, person),
+        new Address("Rua Cupuacu", "98765-432", 5678, "Avocada", false, person));
     person = PersonCreator.createPersonWithAddresses(person, addresses);
 
     BDDMockito.given(personRepository.findById(1L)).willReturn(Optional.of(person));
@@ -106,7 +106,7 @@ public class PersonServiceTest {
     Person newPerson = PersonCreator.createPerson("Luizinho", "1999-12-01");
     Person oldPerson = PersonCreator.createPerson("Luiz", "1998-05-01");
     List<Address> addresses = Arrays.asList(
-        new Address("Rua das Laranjeiras", "12345-789", 1234, "Mangueira", oldPerson));
+        new Address("Rua das Laranjeiras", "12345-789", 1234, "Mangueira", true, oldPerson));
     oldPerson = PersonCreator.createPersonWithAddresses(oldPerson, addresses);
 
     BDDMockito.given(personRepository.findById(ArgumentMatchers.any())).willReturn(Optional.of(oldPerson));
@@ -132,7 +132,7 @@ public class PersonServiceTest {
   public void testDeletePersonSuccessful() throws Exception {
     Person person = PersonCreator.createPerson("Luiz", "1998-05-01");
     List<Address> addresses = Arrays.asList(
-        new Address("Rua das Laranjeiras", "12345-789", 1234, "Mangueira", person));
+        new Address("Rua das Laranjeiras", "12345-789", 1234, "Mangueira", true, person));
     person = PersonCreator.createPersonWithAddresses(person, addresses);
 
     BDDMockito.given(personRepository.findById(ArgumentMatchers.any())).willReturn(Optional.of(person));

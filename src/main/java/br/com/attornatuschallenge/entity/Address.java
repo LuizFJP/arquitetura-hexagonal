@@ -26,7 +26,7 @@ public class Address implements Serializable {
   @Column(name = "city", nullable = false)
   private String city;
 
-  @Column(name = "mainAdress", nullable = true)
+  @Column(name = "mainAdress", nullable = false)
   private boolean mainAddress;
 
   @ManyToOne(fetch = FetchType.LAZY)
@@ -36,11 +36,12 @@ public class Address implements Serializable {
 
   public Address() {}
 
-  public Address(String publicSpace, String zipCode, int number, String city, Person person) {
+  public Address(String publicSpace, String zipCode, int number, String city, boolean mainAddress, Person person) {
     this.publicSpace = publicSpace;
     this.zipCode = zipCode;
     this.number = number;
     this.city = city;
+    this.mainAddress = mainAddress;
     this.person = person;
   }
 

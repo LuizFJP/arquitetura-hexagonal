@@ -7,6 +7,7 @@ import org.springframework.stereotype.Service;
 
 import br.com.attornatuschallenge.entity.Address;
 import br.com.attornatuschallenge.entity.Person;
+import br.com.attornatuschallenge.error.ResourceNotFoundException;
 import br.com.attornatuschallenge.repository.AddressRepository;
 import br.com.attornatuschallenge.utils.Utils;
 
@@ -27,6 +28,11 @@ public class AddressService {
       return addressRepository.save(address);
   }
 
+  public List<Address> getAddresses(Long id) throws Exception {
+    Person person = personService.findById(id);
+    return person.getAddresses();
+  }
+
   public Address getMainAddress(Long id) throws Exception {
       Person person = personService.findById(id);
       for (Address address : person.getAddresses()) {
@@ -34,7 +40,7 @@ public class AddressService {
           return address;
         }
       }
-      throw new Exception("Pessoa não possui endereço cadastrado.");
+      throw new ResourceNotFoundException("Pessoa não possui endereço cadastrado.");
   }
 
   private void updateMainAddress(List<Address> addresses) {
