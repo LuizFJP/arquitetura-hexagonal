@@ -1,0 +1,3 @@
+[build]
+  command = "./mvnw clean package"
+  publish = "target/your-application.jar"

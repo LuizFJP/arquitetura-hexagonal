@@ -64,4 +64,8 @@ public class Person implements Serializable {
   public List<Address> getAddresses() {
     return addresses;
   }
+
+  public Long getId() {
+    return id;
+  }
 }

@@ -19,20 +19,15 @@ public class AddressService {
   AddressRepository addressRepository;
 
   public Address save(Long id, Address address) throws Exception {
-    try {
       Person person = personService.findById(id);
       if (Utils.personHasAddress(person.getAddresses()) && address.isMainAddress()) {
         updateMainAddress(person.getAddresses());
       }
       address.setPerson(person);
       return addressRepository.save(address);
-    } catch (Exception err) {
-      throw err;
-    }
   }
 
   public Address getMainAddress(Long id) throws Exception {
-    try {
       Person person = personService.findById(id);
       for (Address address : person.getAddresses()) {
         if (address.isMainAddress()) {
@@ -40,9 +35,6 @@ public class AddressService {
         }
       }
       throw new Exception("Pessoa não possui endereço cadastrado.");
-    } catch (Exception err) {
-      throw err;
-    }
   }
 
   private void updateMainAddress(List<Address> addresses) {

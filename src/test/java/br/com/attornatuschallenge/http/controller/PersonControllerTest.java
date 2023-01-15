@@ -20,6 +20,7 @@ import com.fasterxml.jackson.databind.ObjectWriter;
 
 import br.com.attornatuschallenge.entity.Address;
 import br.com.attornatuschallenge.entity.Person;
+import br.com.attornatuschallenge.error.ResourceNotFoundException;
 import br.com.attornatuschallenge.service.PersonService;
 import br.com.attornatuschallenge.utils.PersonCreator;
 
@@ -61,7 +62,7 @@ public class PersonControllerTest {
             .content(personRequest)
             .contentType(MediaType.APPLICATION_JSON))
         .andExpect(MockMvcResultMatchers.status().isCreated())
-        .andExpect(MockMvcResultMatchers.jsonPath("$", aMapWithSize(3)))
+        .andExpect(MockMvcResultMatchers.jsonPath("$", aMapWithSize(4)))
         .andExpect(MockMvcResultMatchers.jsonPath("$.name", is("Luiz")))
         .andExpect(MockMvcResultMatchers.jsonPath("$.addresses[0].publicSpace", is("Rua das Laranjeiras")));
   }
@@ -80,7 +81,7 @@ public class PersonControllerTest {
     mvc.perform(
         MockMvcRequestBuilders.get("/api/person/1"))
         .andExpect(MockMvcResultMatchers.status().isOk())
-        .andExpect(MockMvcResultMatchers.jsonPath("$", aMapWithSize(3)))
+        .andExpect(MockMvcResultMatchers.jsonPath("$", aMapWithSize(4)))
         .andExpect(MockMvcResultMatchers.jsonPath("$.name", is("Luiz")))
         .andExpect(MockMvcResultMatchers.jsonPath("$.addresses[1].publicSpace", is("Rua do Acai")));
   }
@@ -89,12 +90,13 @@ public class PersonControllerTest {
   @DisplayName("It fails when getting a person non existing")
   public void testGetPersonFailure() throws Exception {
 
-    BDDMockito.given(personService.findById(ArgumentMatchers.any())).willThrow(new Exception("Person not found."));
+    BDDMockito.given(personService.findById(ArgumentMatchers.any())).willThrow(new ResourceNotFoundException("Person not found with id 1"));
 
     mvc.perform(
         MockMvcRequestBuilders.get("/api/person/1"))
         .andExpect(MockMvcResultMatchers.status().isNotFound())
-        .andExpect(MockMvcResultMatchers.status().reason(("Person not found.")));
+        .andExpect(MockMvcResultMatchers.jsonPath("$.title", is("Resource not found")))
+        .andExpect(MockMvcResultMatchers.jsonPath("$.detail", is("Person not found with id 1")));
   }
 
   @Test
@@ -145,7 +147,7 @@ public class PersonControllerTest {
             .content(personRequest)
             .contentType(MediaType.APPLICATION_JSON))
         .andExpect(MockMvcResultMatchers.status().isOk())
-        .andExpect(MockMvcResultMatchers.jsonPath("$", aMapWithSize(3)))
+        .andExpect(MockMvcResultMatchers.jsonPath("$", aMapWithSize(4)))
         .andExpect(MockMvcResultMatchers.jsonPath("$.addresses[0].mainAddress", is(true)));
   }
 
@@ -160,14 +162,15 @@ public class PersonControllerTest {
     String personRequest = objectWriter.writeValueAsString(person);
 
     BDDMockito.given(personService.update(ArgumentMatchers.any(), ArgumentMatchers.any()))
-        .willThrow(new Exception("Person not found."));
+        .willThrow(new ResourceNotFoundException("Person not found with id 1"));
 
     mvc.perform(
         MockMvcRequestBuilders.put("/api/person/1")
             .content(personRequest)
             .contentType(MediaType.APPLICATION_JSON))
         .andExpect(MockMvcResultMatchers.status().isNotFound())
-        .andExpect(MockMvcResultMatchers.status().reason(("Person not found.")));
+        .andExpect(MockMvcResultMatchers.jsonPath("$.title", is("Resource not found")))
+        .andExpect(MockMvcResultMatchers.jsonPath("$.detail", is("Person not found with id 1")));
   }
 
   @Test
@@ -183,11 +186,12 @@ public class PersonControllerTest {
   @Test
   @DisplayName("It can't delete a person non existing")
   public void testDeletePersonFailure() throws Exception {
-    BDDMockito.doThrow(new Exception("Person not found.")).when(personService).delete(ArgumentMatchers.any());
+    BDDMockito.doThrow(new ResourceNotFoundException("Person not found with id 1")).when(personService).delete(ArgumentMatchers.any());
 
     mvc.perform(
         MockMvcRequestBuilders.delete("/api/person/1"))
         .andExpect(MockMvcResultMatchers.status().isNotFound())
-        .andExpect(MockMvcResultMatchers.status().reason(("Person not found.")));
+      .andExpect(MockMvcResultMatchers.jsonPath("$.title", is("Resource not found")))
+      .andExpect(MockMvcResultMatchers.jsonPath("$.detail", is("Person not found with id 1")));
   }
 }

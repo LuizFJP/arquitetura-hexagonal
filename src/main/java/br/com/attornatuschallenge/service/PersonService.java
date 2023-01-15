@@ -9,6 +9,7 @@ import org.springframework.stereotype.Service;
 
 import br.com.attornatuschallenge.entity.Address;
 import br.com.attornatuschallenge.entity.Person;
+import br.com.attornatuschallenge.error.ResourceNotFoundException;
 import br.com.attornatuschallenge.repository.AddressRepository;
 import br.com.attornatuschallenge.repository.PersonRepository;
 import br.com.attornatuschallenge.utils.Utils;
@@ -39,32 +40,23 @@ public class PersonService {
   }
 
   @Transactional
-  public Person update(Long id, Person newPerson) throws Exception {
-    try {
+  public Person update(Long id, Person newPerson) throws ResourceNotFoundException {
       Person person = findById(id);
 
       person.setName(updateField(person.getName(), newPerson.getName()));
       person.setBirthday(updateField(person.getBirthday(), newPerson.getBirthday()));
       person = updateAddresses(person, newPerson);
 
-      return personRepository.save(person);
-
-    } catch (Exception err) {
-      throw err;
-    }
+      return personRepository.save(person); 
   }
 
-  public void delete(Long id) throws Exception {
-    try {
+  public void delete(Long id) throws ResourceNotFoundException {
       Person person = findById(id);
       personRepository.delete(person);
-    } catch (Exception err) {
-      throw err;
-    }
   }
 
-  public Person findById(Long id) throws Exception {
-    return personRepository.findById(id).orElseThrow(() -> new Exception("Person not found."));
+  public Person findById(Long id) throws ResourceNotFoundException {
+    return personRepository.findById(id).orElseThrow(() -> new ResourceNotFoundException("Person not found with id " + id));
   }
 
   private String updateField(String oldField, String newField) {

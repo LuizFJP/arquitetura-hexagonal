@@ -22,6 +22,7 @@ import static org.hamcrest.Matchers.*;
 
 import br.com.attornatuschallenge.entity.Address;
 import br.com.attornatuschallenge.entity.Person;
+import br.com.attornatuschallenge.error.ResourceNotFoundException;
 import br.com.attornatuschallenge.service.AddressService;
 import br.com.attornatuschallenge.utils.PersonCreator;
 
@@ -62,21 +63,20 @@ public class AddressControllerTest {
 
   @Test
   @DisplayName("It fails to create an address with non existing person")
-  public void testCreatePersonFailure() throws Exception {
+  public void testCreateAddressFailure() throws Exception {
     Person person = PersonCreator.createPerson("Luiz", "1998-05-01");
     Address address = new Address("Rua das Laranjeiras", "12345-789", 1234, "Mangueira", person);
 
     String addressRequest = objectWriter.writeValueAsString(address);
 
     BDDMockito.given(addressService.save(ArgumentMatchers.any(), ArgumentMatchers.any()))
-        .willThrow(new Exception("Person not found."));
+        .willThrow(new ResourceNotFoundException("Person not found."));
 
     mvc.perform(
         MockMvcRequestBuilders.post("/api/address/1")
             .content(addressRequest)
             .contentType(MediaType.APPLICATION_JSON))
-        .andExpect(MockMvcResultMatchers.status().isNotFound())
-        .andExpect(MockMvcResultMatchers.status().reason(("Person not found.")));
+        .andExpect(MockMvcResultMatchers.status().isNotFound());
   }
 
   @Test
@@ -101,11 +101,10 @@ public class AddressControllerTest {
   @DisplayName("It fails to get a main address with non existing person")
   public void testGetAddressFailure() throws Exception {
     BDDMockito.given(addressService.getMainAddress(ArgumentMatchers.any()))
-    .willThrow(new Exception("Person not found."));
+    .willThrow(new ResourceNotFoundException("Person not found."));
 
 mvc.perform(
     MockMvcRequestBuilders.get("/api/address/1"))
-    .andExpect(MockMvcResultMatchers.status().isNotFound())
-    .andExpect(MockMvcResultMatchers.status().reason(("Person not found.")));
+    .andExpect(MockMvcResultMatchers.status().isNotFound());
   }
 }

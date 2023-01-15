@@ -5,13 +5,13 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
-import org.springframework.web.server.ResponseStatusException;
 
 import br.com.attornatuschallenge.entity.Address;
+import br.com.attornatuschallenge.error.ResourceNotFoundException;
 import br.com.attornatuschallenge.service.AddressService;
 
 @RestController
@@ -21,23 +21,23 @@ public class AddressController {
   AddressService addressService;
 
   @PostMapping("/address/{id}")
-  @ResponseStatus(HttpStatus.CREATED)
-  public Address save(@PathVariable("id") Long id, @RequestBody Address address) {
+  public ResponseEntity<Address> save(@PathVariable("id") Long id, @RequestBody Address address) {
     try {
-      return addressService.save(id, address);
+      return new ResponseEntity<Address>(
+        addressService.save(id, address),
+        HttpStatus.CREATED);
     } catch (Exception err) {
-      throw new ResponseStatusException(HttpStatus.NOT_FOUND, err.getMessage());
+      throw new ResourceNotFoundException(err.getMessage());
     }
 
   }
 
-  @ResponseStatus(HttpStatus.OK)
   @GetMapping("/address/{id}")
-  public Address getMainAddress(@PathVariable("id") Long id) {
+  public ResponseEntity<Address> getMainAddress(@PathVariable("id") Long id) {
     try {
-      return addressService.getMainAddress(id);
+      return new ResponseEntity<Address>(addressService.getMainAddress(id), HttpStatus.OK) ;
     } catch (Exception err) {
-      throw new ResponseStatusException(HttpStatus.NOT_FOUND, err.getMessage());
+      throw new ResourceNotFoundException(err.getMessage());
     }
   }
 }
