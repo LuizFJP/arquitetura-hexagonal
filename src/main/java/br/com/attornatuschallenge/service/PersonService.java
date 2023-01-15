@@ -64,7 +64,7 @@ public class PersonService {
   }
 
   public Person findById(Long id) throws Exception {
-    return personRepository.findById(id).orElseThrow(() -> new Exception("Pessoa não cadastrada."));
+    return personRepository.findById(id).orElseThrow(() -> new Exception("Person not found."));
   }
 
   private String updateField(String oldField, String newField) {
