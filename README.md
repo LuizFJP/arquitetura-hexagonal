@@ -1,6 +1,6 @@
 # Attornatus Challenge
 
-Olá, esse projeto foi desenvolvido para o teste técnico da [Attornatus](https://www.linkedin.com/company/attornatus-procuradoria-digital/).
+Olá, este projeto foi desenvolvido para o teste técnico da [Attornatus](https://www.linkedin.com/company/attornatus-procuradoria-digital/).
 
 
 # Sumário
