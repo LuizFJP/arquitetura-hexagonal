@@ -62,6 +62,7 @@ docker run -p 8080:8080 luizportel4/attornatus-api:2.0.0
 
 ### Rota para Editar uma pessoa [PUT (_domain_/api/person/{id})]
 
+**Corpo da Requisição:**
 ```json
 {
   "name":"Luizinho",
@@ -79,11 +80,25 @@ docker run -p 8080:8080 luizportel4/attornatus-api:2.0.0
 ```
 ### Rota para Consultar uma pessoa [GET (_domain_/api/person/{id})]
 
+**Corpo da Requisição:**
+```json
+```
+
 ### Rota para Listar pessoas [GET (_domain_/api/people)]
+
+**Corpo da Requisição:**
+```json
+```
 
 ### [EXTRA] Rota para Poder informar qual endereço é o principal da pessoa [GET (_domain_/api/person{id})]
 
+**Corpo da Requisição:**
+```json
+```
+
 ### Rota para Criar endereço para pessoa [POST (_domain_/api/address/{id})]
+
+**Corpo da Requisição:**
 ```json
  {
       "publicSpace":"Rua das Goiabas",
@@ -94,11 +109,21 @@ docker run -p 8080:8080 luizportel4/attornatus-api:2.0.0
     }
 ```
 ### Rota para Listar endereços da pessoa [GET (_domain_/api/addresses/{id})]
+
+**Corpo da Requisição:**
+```json
+```
+
 ### Rota para Poder informar qual endereço é o principal da pessoa [GET (_domain_/api/person)]
+
+**Corpo da Requisição:**
+```json
+```
 
 ### ResourceNotFound
 Caso seja pesquisado por um id de uma pessoa que não esteja no sistema, será retornado o seguinte corpo:
 
+**Corpo do Retorno:**
 ```json
 {
   "title": "Resource not found",
