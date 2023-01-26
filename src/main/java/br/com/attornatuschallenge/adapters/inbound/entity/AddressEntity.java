@@ -1,4 +1,4 @@
-package br.com.attornatuschallenge.entity;
+package br.com.attornatuschallenge.adapters.inbound.entity;
 
 import java.io.Serializable;
 
@@ -9,7 +9,7 @@ import jakarta.persistence.*;
 @Cacheable(true)
 @Entity
 @Table(name = "Address")
-public class Address implements Serializable {
+public class AddressEntity implements Serializable {
   @Id
   @GeneratedValue(strategy = GenerationType.AUTO)
   private Long id;
@@ -32,11 +32,11 @@ public class Address implements Serializable {
   @ManyToOne(fetch = FetchType.LAZY)
   @JoinColumn(name = "person_id")
   @JsonBackReference
-  private Person person;
+  private PersonEntity person;
 
-  public Address() {}
+  public AddressEntity() {}
 
-  public Address(String publicSpace, String zipCode, int number, String city, boolean mainAddress, Person person) {
+  public AddressEntity(String publicSpace, String zipCode, int number, String city, boolean mainAddress, PersonEntity person) {
     this.publicSpace = publicSpace;
     this.zipCode = zipCode;
     this.number = number;
@@ -65,7 +65,7 @@ public class Address implements Serializable {
     this.mainAddress = mainAddress;
   }
 
-  public void setPerson(Person person) {
+  public void setPerson(PersonEntity person) {
     this.person = person;
   }
 
@@ -89,7 +89,7 @@ public class Address implements Serializable {
     return mainAddress;
   }
 
-  public Person getPerson() {
+  public PersonEntity getPerson() {
     return person;
   }
 

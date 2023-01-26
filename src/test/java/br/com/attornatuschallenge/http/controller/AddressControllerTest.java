@@ -21,9 +21,10 @@ import static org.hamcrest.Matchers.*;
 import java.util.Arrays;
 import java.util.List;
 
-import br.com.attornatuschallenge.entity.Address;
-import br.com.attornatuschallenge.entity.Person;
-import br.com.attornatuschallenge.error.ResourceNotFoundException;
+import br.com.attornatuschallenge.adapters.inbound.AddressController;
+import br.com.attornatuschallenge.adapters.inbound.entity.AddressEntity;
+import br.com.attornatuschallenge.adapters.inbound.entity.PersonEntity;
+import br.com.attornatuschallenge.application.core.exception.error.ResourceNotFoundException;
 import br.com.attornatuschallenge.service.AddressService;
 import br.com.attornatuschallenge.service.PersonService;
 import br.com.attornatuschallenge.utils.PersonCreator;
@@ -45,8 +46,8 @@ public class AddressControllerTest {
   @Test
   @DisplayName("Create an address with success")
   public void testCreateAddressSuccessful() throws Exception {
-    Person person = PersonCreator.createPerson("Luiz", "1998-05-01");
-    Address address = new Address("Rua das Laranjeiras", "12345-789", 1234, "Mangueira", false, person);
+    PersonEntity person = PersonCreator.createPerson("Luiz", "1998-05-01");
+    AddressEntity address = new AddressEntity("Rua das Laranjeiras", "12345-789", 1234, "Mangueira", false, person);
 
     String addressRequest = objectWriter.writeValueAsString(address);
 
@@ -67,8 +68,8 @@ public class AddressControllerTest {
   @Test
   @DisplayName("It fails to create an address with non existing person")
   public void testCreateAddressFailure() throws Exception {
-    Person person = PersonCreator.createPerson("Luiz", "1998-05-01");
-    Address address = new Address("Rua das Laranjeiras", "12345-789", 1234, "Mangueira", true, person);
+    PersonEntity person = PersonCreator.createPerson("Luiz", "1998-05-01");
+    AddressEntity address = new AddressEntity("Rua das Laranjeiras", "12345-789", 1234, "Mangueira", true, person);
 
     String addressRequest = objectWriter.writeValueAsString(address);
 
@@ -86,11 +87,11 @@ public class AddressControllerTest {
   @Test
   @DisplayName("Get all addresses with success")
   public void testGetAddressesSuccessful() throws Exception {
-    Person person = PersonCreator.createPerson("Luiz", "1998-05-01");
+    PersonEntity person = PersonCreator.createPerson("Luiz", "1998-05-01");
 
-    List<Address> addresses = Arrays.asList(
-        new Address("Rua das Laranjeiras", "19875-789", 4567, "Mangueira", true, person),
-        new Address("Rua das Amoras", "12345-789", 1234, "Tapereba", false, person));
+    List<AddressEntity> addresses = Arrays.asList(
+        new AddressEntity("Rua das Laranjeiras", "19875-789", 4567, "Mangueira", true, person),
+        new AddressEntity("Rua das Amoras", "12345-789", 1234, "Tapereba", false, person));
 
     person.setAddresses(addresses);
 
@@ -120,8 +121,8 @@ public class AddressControllerTest {
   @Test
   @DisplayName("Get a main address with success")
   public void testGetAddressSuccessful() throws Exception {
-    Person person = PersonCreator.createPerson("Luiz", "1998-05-01");
-    Address address = new Address("Rua das Laranjeiras", "12345-789", 1234, "Mangueira", true, person);
+    PersonEntity person = PersonCreator.createPerson("Luiz", "1998-05-01");
+    AddressEntity address = new AddressEntity("Rua das Laranjeiras", "12345-789", 1234, "Mangueira", true, person);
 
     BDDMockito.given(addressService.getMainAddress(ArgumentMatchers.any())).willReturn(address);
 

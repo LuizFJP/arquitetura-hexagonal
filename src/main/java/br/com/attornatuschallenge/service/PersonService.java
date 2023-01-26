@@ -3,15 +3,14 @@ package br.com.attornatuschallenge.service;
 import java.util.Date;
 import java.util.List;
 
-import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import br.com.attornatuschallenge.entity.Address;
-import br.com.attornatuschallenge.entity.Person;
-import br.com.attornatuschallenge.error.ResourceNotFoundException;
-import br.com.attornatuschallenge.repository.AddressRepository;
-import br.com.attornatuschallenge.repository.PersonRepository;
+import br.com.attornatuschallenge.adapters.inbound.entity.AddressEntity;
+import br.com.attornatuschallenge.adapters.inbound.entity.PersonEntity;
+import br.com.attornatuschallenge.adapters.outbound.repository.AddressRepository;
+import br.com.attornatuschallenge.adapters.outbound.repository.PersonRepository;
+import br.com.attornatuschallenge.application.core.exception.error.ResourceNotFoundException;
 import br.com.attornatuschallenge.utils.Utils;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.PersistenceContext;
@@ -25,38 +24,36 @@ public class PersonService {
   @Autowired
   AddressRepository addressRepository;
 
-  @Autowired
-  ModelMapper modelMapper;
-
   @PersistenceContext
   private EntityManager entityManager;
 
-  public Person save(Person person) {
+  public PersonEntity save(PersonEntity person) {
     return personRepository.save(person);
   }
 
-  public List<Person> findAll() {
+  public List<PersonEntity> findAll() {
     return personRepository.findAll();
   }
 
   @Transactional
-  public Person update(Long id, Person newPerson) throws ResourceNotFoundException {
-      Person person = findById(id);
+  public PersonEntity update(Long id, PersonEntity newPerson) throws ResourceNotFoundException {
+    PersonEntity person = findById(id);
 
-      person.setName(updateField(person.getName(), newPerson.getName()));
-      person.setBirthday(updateField(person.getBirthday(), newPerson.getBirthday()));
-      person = updateAddresses(person, newPerson);
+    person.setName(updateField(person.getName(), newPerson.getName()));
+    person.setBirthday(updateField(person.getBirthday(), newPerson.getBirthday()));
+    person = updateAddresses(person, newPerson);
 
-      return personRepository.save(person); 
+    return personRepository.save(person);
   }
 
   public void delete(Long id) throws ResourceNotFoundException {
-      Person person = findById(id);
-      personRepository.delete(person);
+    PersonEntity person = findById(id);
+    personRepository.delete(person);
   }
 
-  public Person findById(Long id) throws ResourceNotFoundException {
-    return personRepository.findById(id).orElseThrow(() -> new ResourceNotFoundException("Person not found with id " + id));
+  public PersonEntity findById(Long id) throws ResourceNotFoundException {
+    return personRepository.findById(id)
+        .orElseThrow(() -> new ResourceNotFoundException("Person not found with id " + id));
   }
 
   private String updateField(String oldField, String newField) {
@@ -75,12 +72,12 @@ public class PersonService {
     }
   }
 
-  private Person updateAddresses(Person person, Person newPerson) {
+  private PersonEntity updateAddresses(PersonEntity person, PersonEntity newPerson) {
     if (Utils.personHasAddress(newPerson.getAddresses())) {
-      for (Address address : newPerson.getAddresses()) {
+      for (AddressEntity address : newPerson.getAddresses()) {
         address.setPerson(person);
       }
-  
+
       person.getAddresses().removeAll(person.getAddresses());
       person.getAddresses().addAll(newPerson.getAddresses());
     }

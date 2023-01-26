@@ -1,4 +1,4 @@
-package br.com.attornatuschallenge.entity;
+package br.com.attornatuschallenge.adapters.inbound.entity;
 
 import java.io.Serializable;
 import java.util.*;
@@ -10,7 +10,7 @@ import com.fasterxml.jackson.annotation.JsonManagedReference;
 
 @Entity
 @Cacheable(true)
-public class Person implements Serializable {
+public class PersonEntity implements Serializable {
   @Id
   @GeneratedValue(strategy = GenerationType.AUTO)
   private Long id;
@@ -31,11 +31,11 @@ public class Person implements Serializable {
 
   @Column(name = "addresses")
   @JsonManagedReference
-  private List<Address> addresses = new ArrayList<>();
+  private List<AddressEntity> addresses = new ArrayList<>();
 
-  public Person() {}
+  public PersonEntity() {}
 
-  public Person(String name, Date birthday) {
+  public PersonEntity(String name, Date birthday) {
     this.name = name;
     this.birthday = birthday;
   }
@@ -48,7 +48,7 @@ public class Person implements Serializable {
     this.birthday = birthday;
   }
 
-  public void setAddresses(List<Address> addresses) {
+  public void setAddresses(List<AddressEntity> addresses) {
     this.addresses = addresses;
   }
 
@@ -60,7 +60,7 @@ public class Person implements Serializable {
     return birthday;
   }
 
-  public List<Address> getAddresses() {
+  public List<AddressEntity> getAddresses() {
     return addresses;
   }
 

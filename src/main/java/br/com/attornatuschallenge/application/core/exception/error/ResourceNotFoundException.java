@@ -1,4 +1,4 @@
-package br.com.attornatuschallenge.error;
+package br.com.attornatuschallenge.application.core.exception.error;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.ResponseStatus;

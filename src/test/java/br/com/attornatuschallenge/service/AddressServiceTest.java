@@ -15,11 +15,11 @@ import org.mockito.Mock;
 
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 
-import br.com.attornatuschallenge.entity.Address;
-import br.com.attornatuschallenge.entity.Person;
-import br.com.attornatuschallenge.error.ResourceNotFoundException;
-import br.com.attornatuschallenge.repository.AddressRepository;
-import br.com.attornatuschallenge.repository.PersonRepository;
+import br.com.attornatuschallenge.adapters.inbound.entity.AddressEntity;
+import br.com.attornatuschallenge.adapters.inbound.entity.PersonEntity;
+import br.com.attornatuschallenge.adapters.outbound.repository.AddressRepository;
+import br.com.attornatuschallenge.adapters.outbound.repository.PersonRepository;
+import br.com.attornatuschallenge.application.core.exception.error.ResourceNotFoundException;
 import br.com.attornatuschallenge.utils.PersonCreator;
 
 @ExtendWith(SpringExtension.class)
@@ -37,14 +37,14 @@ public class AddressServiceTest {
   @Test
   @DisplayName("Create an address with success")
   public void testCreateAddressSuccessful() throws Exception {
-    Person person = PersonCreator.createPerson("Luiz", "1998-05-01");
-    Address address = new Address("Rua das Laranjeiras", "12345-789", 1234, "Mangueira", true, null);
+    PersonEntity person = PersonCreator.createPerson("Luiz", "1998-05-01");
+    AddressEntity address = new AddressEntity("Rua das Laranjeiras", "12345-789", 1234, "Mangueira", true, null);
     person.setAddresses(Arrays.asList(address));
 
     BDDMockito.given(personService.findById(1L)).willReturn(person);
     BDDMockito.given(addressRepository.save(address)).willReturn(address);
 
-    Address addressUpdated = addressService.save(1L, address);
+    AddressEntity addressUpdated = addressService.save(1L, address);
 
     Assertions.assertThat(addressUpdated).isNotNull();
     Assertions.assertThat(addressUpdated.getPerson()).isEqualTo(person);
@@ -57,7 +57,7 @@ public class AddressServiceTest {
     BDDMockito.given(personService.findById(1L))
     .willThrow(new ResourceNotFoundException("Person not found with id 1"));
   
-    Address address = new Address("Rua das Laranjeiras", "12345-789", 1234, "Mangueira", true, null);
+    AddressEntity address = new AddressEntity("Rua das Laranjeiras", "12345-789", 1234, "Mangueira", true, null);
 
     assertThrows(ResourceNotFoundException.class, () -> addressService.save(1L, address));
   }
@@ -65,17 +65,17 @@ public class AddressServiceTest {
   @Test
   @DisplayName("It Gets all addresses")
   public void testGetAddressesSuccessful() throws Exception {
-    Person person = PersonCreator.createPerson("Luiz", "1998-05-01");
+    PersonEntity person = PersonCreator.createPerson("Luiz", "1998-05-01");
 
-    List<Address> addresses = Arrays.asList(
-        new Address("Rua das Laranjeiras", "19875-789", 4567, "Mangueira", true, person),
-        new Address("Rua das Amoras", "12345-789", 1234, "Tapereba", false, person));
+    List<AddressEntity> addresses = Arrays.asList(
+        new AddressEntity("Rua das Laranjeiras", "19875-789", 4567, "Mangueira", true, person),
+        new AddressEntity("Rua das Amoras", "12345-789", 1234, "Tapereba", false, person));
 
     person.setAddresses(addresses);
 
     BDDMockito.given(personService.findById(1L)).willReturn(person);
 
-    List<Address> addressesFound = addressService.getAddresses(1L);
+    List<AddressEntity> addressesFound = addressService.getAddresses(1L);
 
     Assertions.assertThat(addressesFound).isNotNull();
     Assertions.assertThat(addressesFound).hasSize(2);
@@ -97,13 +97,13 @@ public class AddressServiceTest {
   @Test
   @DisplayName("It Gets main address")
   public void testGetMainAddressSuccessful() throws Exception {
-    Person person = PersonCreator.createPerson("Luiz", "1998-05-01");
-    Address address = new Address("Rua das Laranjeiras", "12345-789", 1234, "Mangueira", true, null);
+    PersonEntity person = PersonCreator.createPerson("Luiz", "1998-05-01");
+    AddressEntity address = new AddressEntity("Rua das Laranjeiras", "12345-789", 1234, "Mangueira", true, null);
     person.setAddresses(Arrays.asList(address));
 
     BDDMockito.given(personService.findById(1L)).willReturn(person);
 
-    Address addressFound = addressService.getMainAddress(1L);
+    AddressEntity addressFound = addressService.getMainAddress(1L);
 
     Assertions.assertThat(addressFound).isNotNull();
     Assertions.assertThat(addressFound.isMainAddress()

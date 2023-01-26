@@ -1,4 +1,4 @@
-package br.com.attornatuschallenge.handler;
+package br.com.attornatuschallenge.application.core.exception.handler;
 
 import java.util.Date;
 
@@ -7,8 +7,8 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 
-import br.com.attornatuschallenge.error.ResourceNotFoundException;
-import br.com.attornatuschallenge.error.ResourcesNotFoundDetails;
+import br.com.attornatuschallenge.application.core.exception.error.ResourceNotFoundException;
+import br.com.attornatuschallenge.application.core.exception.error.ResourcesNotFoundDetails;
 
 @ControllerAdvice
 public class RestExceptionHandler {

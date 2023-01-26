@@ -1,4 +1,4 @@
-package br.com.attornatuschallenge.error;
+package br.com.attornatuschallenge.application.core.exception.error;
 
 public class ResourcesNotFoundDetails {
   private String title;

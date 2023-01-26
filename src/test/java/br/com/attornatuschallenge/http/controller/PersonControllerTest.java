@@ -16,9 +16,10 @@ import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.ObjectWriter;
 
-import br.com.attornatuschallenge.entity.Address;
-import br.com.attornatuschallenge.entity.Person;
-import br.com.attornatuschallenge.error.ResourceNotFoundException;
+import br.com.attornatuschallenge.adapters.inbound.PersonController;
+import br.com.attornatuschallenge.adapters.inbound.entity.AddressEntity;
+import br.com.attornatuschallenge.adapters.inbound.entity.PersonEntity;
+import br.com.attornatuschallenge.application.core.exception.error.ResourceNotFoundException;
 import br.com.attornatuschallenge.service.PersonService;
 import br.com.attornatuschallenge.utils.PersonCreator;
 
@@ -44,10 +45,10 @@ public class PersonControllerTest {
   @DisplayName("Create a person with success")
   public void testCreatePersonSuccessful() throws Exception {
 
-    Person person = PersonCreator.createPerson("Luiz", "1998-05-01");
-    List<Address> addresses = Arrays.asList(
-        new Address("Rua das Laranjeiras", "12345-789", 1234, "Mangueira", false, person),
-        new Address("Rua Cupuacu", "98765-432", 5678, "Avocada", true, person));
+    PersonEntity person = PersonCreator.createPerson("Luiz", "1998-05-01");
+    List<AddressEntity> addresses = Arrays.asList(
+        new AddressEntity("Rua das Laranjeiras", "12345-789", 1234, "Mangueira", false, person),
+        new AddressEntity("Rua Cupuacu", "98765-432", 5678, "Avocada", true, person));
     person = PersonCreator.createPersonWithAddresses(person, addresses);
 
     BDDMockito.given(personService.save(ArgumentMatchers.any())).willReturn(person);
@@ -67,10 +68,10 @@ public class PersonControllerTest {
   @Test
   @DisplayName("Get a person with success")
   public void testGetPersonSuccessful() throws Exception {
-    Person person = PersonCreator.createPerson("Luiz", "1998-05-01");
-    List<Address> addresses = Arrays.asList(
-        new Address("Rua das Laranjeiras", "12345-789", 1234, "Mangueira", true, null),
-        new Address("Rua do Acai", "98765-432", 5678, "Avocada", false, null));
+    PersonEntity person = PersonCreator.createPerson("Luiz", "1998-05-01");
+    List<AddressEntity> addresses = Arrays.asList(
+        new AddressEntity("Rua das Laranjeiras", "12345-789", 1234, "Mangueira", true, null),
+        new AddressEntity("Rua do Acai", "98765-432", 5678, "Avocada", false, null));
     person = PersonCreator.createPersonWithAddresses(person, addresses);
 
     BDDMockito.given(personService.findById(ArgumentMatchers.any())).willReturn(person);
@@ -100,7 +101,7 @@ public class PersonControllerTest {
   @Test
   @DisplayName("It returns all people registred")
   public void testGetPeopleSuccesful() throws Exception {
-    List<Person> people = Arrays.asList(
+    List<PersonEntity> people = Arrays.asList(
         PersonCreator.createPerson("Luiz", "1998-05-01"),
         PersonCreator.createPerson("Fernando", "1949-09-12"),
         PersonCreator.createPerson("Julio", "2005-04-07"));
@@ -118,7 +119,7 @@ public class PersonControllerTest {
   @Test
   @DisplayName("It returns an empty array when there's no anyone registred")
   public void testGetPeopleEmpty() throws Exception {
-    List<Person> people = new ArrayList<>();
+    List<PersonEntity> people = new ArrayList<>();
 
     BDDMockito.given(personService.findAll()).willReturn(people);
 
@@ -132,8 +133,8 @@ public class PersonControllerTest {
   @DisplayName("It returns an empty array when there's no anyone registred")
   public void testPutPersonSuccesful() throws Exception {
 
-    Person person = PersonCreator.createPerson("Luiz", "1997-09-20");
-    Address address = new Address("Rua das Laranjeiras", "12345-789", 1234, "Mangueira", true, person);
+    PersonEntity person = PersonCreator.createPerson("Luiz", "1997-09-20");
+    AddressEntity address = new AddressEntity("Rua das Laranjeiras", "12345-789", 1234, "Mangueira", true, person);
     person.setAddresses(Arrays.asList(address));
 
     BDDMockito.given(personService.update(ArgumentMatchers.any(), ArgumentMatchers.any())).willReturn(person);
@@ -151,8 +152,8 @@ public class PersonControllerTest {
   @Test
   @DisplayName("It fails when update a person non existing")
   public void testPutPersonFailure() throws Exception {
-    Person person = PersonCreator.createPerson("Luiz", "1997-09-20");
-    Address address = new Address("Rua das Laranjeiras", "12345-789", 1234, "Mangueira", true, person);
+    PersonEntity person = PersonCreator.createPerson("Luiz", "1997-09-20");
+    AddressEntity address = new AddressEntity("Rua das Laranjeiras", "12345-789", 1234, "Mangueira", true, person);
     address.setMainAddress(true);
     person.setAddresses(Arrays.asList(address));
 
